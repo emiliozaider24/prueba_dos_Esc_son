@@ -18,7 +18,7 @@
     
 
     <script>
-        //var sound=new Audio("sonido/barcode.wav");
+        var sound=new Audio("barcode.wav");
         var i=0;
         //definimos los arreglos que se ocuparan para almacenar los codigo leidos.
         var  CodigosLeidos=new Array(31);
@@ -38,7 +38,7 @@
                target: document.querySelector('#camera'), 
                singleChannel: false // true: only the red color-channel is read         
               },
-              frequency: 5,
+              frequency: 20,
               decoder: 
               {
                 //readers: ['code_128_reader']// seleccionamos el tipo de decodificacion  para el codigo de barras
@@ -65,7 +65,7 @@
               locator:
               {
                 halfSample: true,
-                patchSize: "x-large"
+                patchSize: "medium"
               },
 
             }, 
@@ -141,6 +141,7 @@
             exis=1;
             contador++;
           }
+          sound.play(); 
           var compara=0;
           var pA=0,pC=0;//pA= posición actual, pC=posición a comparar
          while(compara<=10&&ExistenciaArray[pC]!="")
