@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title> Ler Barcode </title>
+    <title> Lector de codigo de barras</title>
+    
 </head>
 
 <body>
@@ -14,32 +15,159 @@
     <div id="camera"></div>
 
     <script src="quagga.min.js"></script>
+    
 
     <script>
+        var sound=new Audio("sonido/barcode.wav");
+        var i=0;
+        //definimos los arreglos que se ocuparan para almacenar los codigo leidos.
+        var  CodigosLeidos=new Array(31);
+        var  ExistenciaArray=new Array(31);
+        var  codigoArray=new Array(31);
+        var  decodificacion= new Array(31);
+        let decodificacionSET=new Array(31);
 
-        Quagga.init({
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: document.querySelector('#camera')    // Or '#yourElement' (optional)
+        Quagga.init(
+            {
+                locate:true,
+                inputStream:
+              {
+
+               name: "Live",
+               type: "LiveStream",
+               target: document.querySelector('#camera'), 
+               singleChannel: false // true: only the red color-channel is read         
+              },
+              frequency: 50,
+              decoder: 
+              {
+                //readers: ['code_128_reader']// seleccionamos el tipo de decodificacion  para el codigo de barras
+               readers: 
+               [
+                'ean_reader',
+                'ean_8_reader',
+                'ean_5_reader',
+                'ean_2_reader',
+               'code_128_reader',
+               'upc_reader',
+               'upc_e_reader',
+               'code_39_vin_reader', 
+               'code_39_reader',
+               'codabar_reader',
+               'upc_e_reader',
+               'code_93_reader', 
+              'i2of5_reader',
+               '2of5_reader']
+
+               //
+                
             },
-            decoder: {
-                readers: ['code_128_reader','ean_reader','upc_reader','upc_e_reader','code_39_vin_reader','ean_8_reader','code_39_reader','codabar_reader','upc_e_reader','i2of5_reader','2of5_reader','code_93_reader']
-            }
-        }, function (err) {
-            if (err) {
-                console.log(err);
-                return
-            }
-            console.log("Initialization finished. Ready to start");
-            Quagga.start();
-        });
+              locator:
+              {
+                halfSample: true,
+                patchSize: "x-large"
+              },
 
-        Quagga.onDetected(function (data) {
+            }, 
+
+            
+            
+            function (err) 
+            {
+                if (err) 
+                {
+                   console.log(err);
+                   return
+                }
+                console.log("Inicialización finalizada, Comenzar lectura");
+                Quagga.start();//inicializamos la camara seleccionada para empezar el escaneo 
+
+            }
+        );
+
+        Quagga.onDetected(
+            function (data) 
+        {
             console.log(data.codeResult.code);
-            document.querySelector('#resultado').innerText = data.codeResult.code;
-        });
+            if(i<=30)
+            {
 
+              CodigosLeidos[i]=data.codeResult.code;
+              decodificacionSET[i]=data.codeResult.codeset;
+              decodificacion[i]=data.codeResult.format;
+              
+              i++;
+            }
+            else
+            {
+              i=0;
+             // Quagga.stop (data);
+              calculaModa();   
+            }
+
+            //document.querySelector('#resultado').innerText=i;
+           // moda(data.codeResult.code);
+            //document.querySelector('#resultado').innerText = data.codeResult.code;
+           
+            Quagga.start();
+        } );
+
+        function calculaModa( )
+        {
+          
+          console.log(CodigosLeidos);
+          console.log(decodificacion);
+          var contador=0, n=0, r=0,exis=1;
+          while(contador<=30)
+          {
+          
+            var codigo=CodigosLeidos[contador];
+            if(codigo!="null")
+            {
+              codigoArray[n]=codigo;
+              for(var L=contador;L<=30;L++)//recorremos el arreglo buscando coincidencias
+              {
+                if(codigo==CodigosLeidos[L+1]&&CodigosLeidos[L+1]!="null")
+                {
+                  exis++;
+                  CodigosLeidos[L+1]="null";
+                }
+                ExistenciaArray[n]=exis;
+              }
+              CodigosLeidos[contador]="null";
+              
+              n++;
+              console.log(CodigosLeidos);
+              console.log(ExistenciaArray);
+              console.log(codigoArray);
+            }
+            
+            exis=1;
+            contador++;
+          }
+          var compara=0;
+          var pA=0,pC=0;//pA= posición actual, pC=posición a comparar
+         while(compara<=30&&ExistenciaArray[pC]!="")
+         {
+           if(ExistenciaArray[pA]>ExistenciaArray[pC+1]&&ExistenciaArray[pC+1]!="")
+           {
+             pC++;
+           }
+           if(ExistenciaArray[pA]<=ExistenciaArray[pC+1]&&ExistenciaArray[pC+1]!="")
+           {
+            pC++; 
+            pA=pC;
+           }
+           compara++;
+         }
+         console.log("el resusltado es: "+codigoArray[pA]);
+          
+          document.querySelector('#resultado').innerText =codigoArray[pA];
+          sound.play()
+          CodigosLeidos.length=0;
+          ExistenciaArray.length=0;
+          codigoArray.length=0;
+        };
     </script>
 
 </body>
