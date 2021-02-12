@@ -38,7 +38,7 @@
                target: document.querySelector('#camera'), 
                singleChannel: false // true: only the red color-channel is read         
               },
-              frequency: 20,
+              frequency: 5,
               decoder: 
               {
                 //readers: ['code_128_reader']// seleccionamos el tipo de decodificacion  para el codigo de barras
@@ -93,9 +93,7 @@
             {
 
               CodigosLeidos[i]=data.codeResult.code;
-              decodificacionSET[i]=data.codeResult.codeset;
-              decodificacion[i]=data.codeResult.format;
-              
+              sound.play();       
               i++;
             }
             else
@@ -161,7 +159,7 @@
          console.log("el resusltado es: "+codigoArray[pA]);
           
           document.querySelector('#resultado').innerText =codigoArray[pA];
-          sound.play()
+          
           CodigosLeidos.length=0;
           ExistenciaArray.length=0;
           codigoArray.length=0;
