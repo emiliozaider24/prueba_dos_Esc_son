@@ -89,7 +89,7 @@
             function (data) 
         {
             console.log(data.codeResult.code);
-            if(i<=30)
+            if(i<=10)
             {
 
               CodigosLeidos[i]=data.codeResult.code;
@@ -107,25 +107,23 @@
 
             //document.querySelector('#resultado').innerText=i;
            // moda(data.codeResult.code);
-            //document.querySelector('#resultado').innerText = data.codeResult.code;
-           
-            Quagga.start();
+            //document.querySelector('#resultado').innerText = data.codeResult.code
         } );
 
         function calculaModa( )
         {
           
-          console.log(CodigosLeidos);
-          console.log(decodificacion);
+          //console.log(CodigosLeidos);
+          //console.log(decodificacion);
           var contador=0, n=0, r=0,exis=1;
-          while(contador<=30)
+          while(contador<=10)
           {
           
             var codigo=CodigosLeidos[contador];
             if(codigo!="null")
             {
               codigoArray[n]=codigo;
-              for(var L=contador;L<=30;L++)//recorremos el arreglo buscando coincidencias
+              for(var L=contador;L<=10;L++)//recorremos el arreglo buscando coincidencias
               {
                 if(codigo==CodigosLeidos[L+1]&&CodigosLeidos[L+1]!="null")
                 {
@@ -137,9 +135,9 @@
               CodigosLeidos[contador]="null";
               
               n++;
-              console.log(CodigosLeidos);
-              console.log(ExistenciaArray);
-              console.log(codigoArray);
+             // console.log(CodigosLeidos);
+              //console.log(ExistenciaArray);
+              //console.log(codigoArray);
             }
             
             exis=1;
@@ -147,7 +145,7 @@
           }
           var compara=0;
           var pA=0,pC=0;//pA= posición actual, pC=posición a comparar
-         while(compara<=30&&ExistenciaArray[pC]!="")
+         while(compara<=10&&ExistenciaArray[pC]!="")
          {
            if(ExistenciaArray[pA]>ExistenciaArray[pC+1]&&ExistenciaArray[pC+1]!="")
            {
